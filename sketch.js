@@ -372,5 +372,3 @@ function nearestNeighbor(){
       swap(remainVertices, 0, bestNeighbor);
   }
 }
-
-// Genetic //
