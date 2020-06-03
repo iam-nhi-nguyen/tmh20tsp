@@ -91,6 +91,7 @@ function setup() {
   // Genetic
   for (var i = 0; i < popSize; i++) {
     population[i] = customShuffle(orderGA, orderGA[0]);
+    console.log(population[i]);
   }
   statusP = createP('').style('font-size', '32pt');
 }
