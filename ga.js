@@ -79,7 +79,6 @@ function calculateFitness() {
   }
   
   function mutate(order, mutationRate) {
-    console.log(order);
     for (var i = 0; i < totalVertices; i++) {
       if (random(1) < mutationRate) {
         var indexA = floor(random(1, order.length - 1));
@@ -87,5 +86,4 @@ function calculateFitness() {
         swap(order, indexA, indexB);
       }
     }
-    console.log(order);
   }
