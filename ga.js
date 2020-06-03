@@ -45,7 +45,7 @@ function calculateFitness() {
       var orderA = pickOne(population, fitness);
       var orderB = pickOne(population, fitness);
       var order = crossOver(orderA, orderB);
-      mutate(order, 0.1);
+      mutate(order, 0.2);
       newPopulation[i] = order;
     }
     population = newPopulation;
