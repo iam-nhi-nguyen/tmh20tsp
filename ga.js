@@ -64,9 +64,11 @@ function calculateFitness() {
   }
   
   function crossOver(orderA, orderB) {
-    var start = floor(random(orderA.length));
+    var start = floor(random(1, orderA.length));
     var end = floor(random(start + 1, orderA.length));
-    var neworder = orderA.slice(start, end);
+    var neworder = []
+    neworder[0] = 0;
+    neworder.concat(orderA.slice(start, end));
     for (var i = 0; i < orderB.length; i++) {
       var vertex = orderB[i];
       if (!neworder.includes(vertex)) {
@@ -77,11 +79,13 @@ function calculateFitness() {
   }
   
   function mutate(order, mutationRate) {
+    console.log(order);
     for (var i = 0; i < totalVertices; i++) {
       if (random(1) < mutationRate) {
-        var indexA = floor(random(order.length));
-        var indexB = (indexA + 1) % totalVertices;
+        var indexA = floor(random(1, order.length - 1));
+        var indexB = (indexA + 1);
         swap(order, indexA, indexB);
       }
     }
+    console.log(order);
   }

@@ -7,7 +7,7 @@
 
 // Vertices
 var vertices = [];
-var totalVertices = 20;
+var totalVertices = 15;
 
 // Set up variables
 var rate = 5;
@@ -66,12 +66,14 @@ var statusP;
 // Set up //
 function setup() {
   createCanvas(2*panelWidth, 3*panelHeight);
+  var orderGA = [];
 
   // Get random vertices
   for (var i = 0; i < totalVertices; i++) {
     var v = createVector(random(panelWidth - 2*padding), random(panelHeight - 2*padding));
     vertices[i] = v;
     order[i] = i;
+    orderGA[i] = i;
   }
 
   // Bruce force
@@ -88,7 +90,7 @@ function setup() {
 
   // Genetic
   for (var i = 0; i < popSize; i++) {
-    population[i] = shuffle(order);
+    population[i] = customShuffle(orderGA, orderGA[0]);
   }
   statusP = createP('').style('font-size', '32pt');
 }
@@ -207,7 +209,7 @@ function draw() {
   textSize(bodySize);
   fill(bodyColor);
   var dpath = calcDistancePath(path);
-  if (path.length >= totalVertices){
+  if (remainVertices.length <= 1){
     var percentOptimal = 100 * (recordDistance / dpath);
     text(nf(percentOptimal, 0, 2) + '% tối ưu', 0, -bodySize);
   }
@@ -285,6 +287,11 @@ function swap(a, i, j) {
   var temp = a[i];
   a[i] = a[j];
   a[j] = temp;
+}
+
+function customShuffle(array, first) {
+  const updatedArray = shuffle(array).filter(item => item !== first);
+  return [first, ...updatedArray];
 }
 
 // Bruce force //
@@ -365,3 +372,5 @@ function nearestNeighbor(){
       swap(remainVertices, 0, bestNeighbor);
   }
 }
+
+// Genetic //
