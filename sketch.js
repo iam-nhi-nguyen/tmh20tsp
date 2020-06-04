@@ -49,7 +49,9 @@ var currentVertex;
 var remainVertices = [];
 
 var path = [];
-var countGR = 0;
+var countGR;
+
+var totalCountGR;
 
 // Genetic
 var popSize = 500;
@@ -102,6 +104,9 @@ function setup() {
   //console.log(totalPermutations);
 
   // Greedy
+  countGR = 0;
+  totalCountGR = (totalVertices-1)*(totalVertices)/2;
+
   path = [];
 
   currentVertex = vertices[0];
@@ -183,7 +188,7 @@ function draw() {
   var percent = 100 * ((count + 1) / totalPermutations);
   if (percent < 0.01) {percent = 0;}
   text('Độ dài: ' + nf(recordDistance, 0, 2) + ' px', 0, -2*bodySize);
-  text(nf(percent, 0, 2) + '% hoàn thành; ' + nf((count + 1)*(totalVertices - 1)) + ' phép tính', 0, -bodySize);
+  text(nf(percent, 0, 2) + '% hoàn thành / ' + nf(totalPermutations*(totalVertices - 1)) + ' phép tính', 0, -bodySize);
 
   nextOrder();
 
@@ -207,25 +212,31 @@ function draw() {
   }
   endShape();
 
-  nearestNeighbor();
+  if(remainVertices != null){
+    nearestNeighbor();
 
-  path[path.length] = remainVertices[0];
+    path[path.length] = remainVertices[0];
 
-  stroke(processColor);
-  strokeWeight(pathWeightProcess);
-  noFill();
-  beginShape();
-  for (var i = 0; i < remainVertices.length; i++){    
-    vertex(currentVertex.x, currentVertex.y);
-    vertex(remainVertices[i].x, remainVertices[i].y);
+    stroke(processColor);
+    strokeWeight(pathWeightProcess);
+    noFill();
+    beginShape();
+    for (var i = 0; i < remainVertices.length; i++){    
+      vertex(currentVertex.x, currentVertex.y);
+      vertex(remainVertices[i].x, remainVertices[i].y);
+    }
+    endShape();
+
+    currentVertex = remainVertices[0];
+    if (remainVertices.length > 1){
+      remainVertices.shift();
+    }
+    else{
+      remainVertices = null;
+    }
   }
-  endShape();
+
   strokeWeight(0);
-
-  currentVertex = remainVertices[0];
-  if (remainVertices.length > 1){
-    remainVertices.shift();
-  }
 
   // Process panel
   translate(0, panelHeight);
@@ -233,11 +244,13 @@ function draw() {
   textSize(bodySize);
   fill(bodyColor);
   var dpath = calcDistancePath(path);
-  if (remainVertices.length <= 1){
+  if (remainVertices == null){
     var percentOptimal = 100 * (recordDistance / dpath);
     text('Độ dài: ' + nf(dpath, 0, 2) + ' px; ' + nf(percentOptimal, 0, 2) + '% tối ưu', 0, -2*bodySize);
   }
-  text(nf(countGR) + ' phép tính', 0, -bodySize);
+  var percentGR = 100 * (countGR / totalCountGR)
+  text(nf(percentGR, 0, 2) + '% hoàn thành / ' + nf(totalCountGR, 0, 0) + ' phép tính', 0, -bodySize);
+  //console.log(countGR);
 
   // Genetic //
 
@@ -318,7 +331,7 @@ function draw() {
   var percentOptimalGA = 100 * (recordDistance / recordDistanceGA);
   var percentGA = 100 * (countGA / totalCountGA);
   text('Độ dài: ' + nf(recordDistanceGA, 0, 2) + ' px; ' + nf(percentOptimalGA, 0, 2) + '% tối ưu', 0, -2*bodySize);
-  text(nf(percentGA, 0, 2) + '% hoàn thành; ' + nf(countGA) + ' phép tính', 0, -bodySize);
+  text(nf(percentGA, 0, 2) + '% hoàn thành / ' + nf(totalCountGA) + ' phép tính', 0, -bodySize);
 }
 
 function drawVertices(fillColorStart, fillColor, radius){
@@ -416,9 +429,12 @@ function calcDistancePath(path) {
 
 // Nearest neighbor
 function nearestNeighbor(){
-  if (remainVertices.length > 0){
+  if (remainVertices != null){
+      console.log(remainVertices.length);
       var bestNeighbor = 0;
       var bestDistance = dist(currentVertex.x, currentVertex.y, remainVertices[0].x, remainVertices[0].y);
+      countGR ++;
+
       var d;
       for (var i = 1; i < remainVertices.length; i++){
         countGR ++;
