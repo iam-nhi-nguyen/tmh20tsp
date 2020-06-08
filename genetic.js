@@ -10,8 +10,8 @@ var totalVertices = 7;
 // Set up variables
 var framerate = 10;
 
-var panelWidth = 390;
-var panelHeight = 250;
+var panelWidth = 580;
+var panelHeight = 450;
 
 var padding = 50;
 
@@ -35,24 +35,6 @@ var bodySize = 15;
 var titleColor = 0;
 var bodyColor = 0;
 
-// Bruce force
-var order = [];
-
-var totalPermutations;
-var count = 0;
-
-var recordDistance;
-var bestEver;
-
-// Greedy
-var currentVertex;
-var remainVertices = [];
-
-var path = [];
-var countGR;
-
-var totalCountGR;
-
 // Genetic
 var popSize = 500;
 var population = [];
@@ -70,48 +52,20 @@ var statusP;
 
 var indexPopulation;
 
-// Helper
-var factorial = [1];
-for (var i = 1; i < 21; i++){
-  factorial[i] = factorial[i-1]*i;
-}
-
 // Set up //
 function setup() {
-  createCanvas(3*panelWidth, 2*panelHeight);
+  createCanvas(2*panelWidth, panelHeight);
   var orderGA = [];
 
   vertices = [];
-  order = [];
   totalVertices = document.getElementById('numVer').value;
 
   // Get random vertices
   for (var i = 0; i < totalVertices; i++) {
     var v = createVector(random(panelWidth - 2*padding), random(panelHeight - 2*padding));
     vertices[i] = v;
-    order[i] = i;
     orderGA[i] = i;
   }
-
-  // Bruce force
-  count = 0;
-
-  var d = calcDistance(vertices, order);
-  recordDistance = d;
-  bestEver = order.slice();
-
-  totalPermutations = factorial[totalVertices-1];
-  //console.log(totalPermutations);
-
-  // Greedy
-  countGR = 0;
-  totalCountGR = (totalVertices-1)*(totalVertices)/2;
-
-  path = [];
-
-  currentVertex = vertices[0];
-  remainVertices = vertices.slice(1);
-  path[0] = vertices[0];
 
   // Genetic
   population = [];
@@ -140,117 +94,6 @@ function setup() {
 function draw() {
   background(backgroundColor);
   frameRate(framerate);
-  
-  // Bruce force //
-
-  // Result panel
-  translate(padding, padding);
-
-  textSize(titleSize);
-  fill(titleColor);
-  text('Vét cạn', - titleSize, - titleSize);
-
-  drawVertices(startColorResult, verticesColorResult, radiusResult);
-
-  stroke(pathColorResult);
-  strokeWeight(pathWeightResult);
-  noFill();
-  beginShape();
-  for (var i = 0; i < bestEver.length; i++) {
-    var n = bestEver[i];
-    vertex(vertices[n].x, vertices[n].y);
-  }
-  endShape();
-
-  // Process panel
-  translate(0, panelHeight);
-  stroke(processColor);
-  strokeWeight(pathWeightProcess);
-  noFill();
-  beginShape();
-  for (var i = 0; i < order.length; i++) {
-    var n = order[i];
-    vertex(vertices[n].x, vertices[n].y);
-  }
-  endShape();
-  strokeWeight(0);
-
-  drawVertices(processColor, processColor, radiusProcess);
-
-  var d = calcDistance(vertices, order);
-  if (d < recordDistance) {
-    recordDistance = d;
-    bestEver = order.slice();
-  }
-
-  textSize(bodySize);
-  fill(bodyColor);
-  var percent = 100 * ((count + 1) / totalPermutations);
-  if (percent < 0.01) {percent = 0;}
-  text('Độ dài: ' + nf(recordDistance, 0, 2) + ' px', 0, -2*bodySize);
-  text(nf(percent, 0, 2) + '% hoàn thành / ' + nf(totalPermutations*(totalVertices - 1)) + ' phép tính', 0, -bodySize);
-
-  nextOrder();
-
-  // Greedy //
-
-  // Result panel
-  translate(panelWidth, - panelHeight);
-
-  textSize(titleSize);
-  fill(titleColor);
-  text('Tham lam', - titleSize, - titleSize);
-
-  drawVertices(startColorResult, verticesColorResult, radiusResult);
-
-  stroke(pathColorResult);
-  strokeWeight(pathWeightResult);
-  noFill();
-  beginShape();
-  for (var i = 0; i < path.length; i++){    
-    vertex(path[i].x, path[i].y);
-  }
-  endShape();
-
-  if(remainVertices != null){
-    nearestNeighbor();
-
-    path[path.length] = remainVertices[0];
-
-    stroke(processColor);
-    strokeWeight(pathWeightProcess);
-    noFill();
-    beginShape();
-    for (var i = 0; i < remainVertices.length; i++){    
-      vertex(currentVertex.x, currentVertex.y);
-      vertex(remainVertices[i].x, remainVertices[i].y);
-    }
-    endShape();
-
-    currentVertex = remainVertices[0];
-    if (remainVertices.length > 1){
-      remainVertices.shift();
-    }
-    else{
-      remainVertices = null;
-    }
-  }
-
-  strokeWeight(0);
-
-  // Process panel
-  translate(0, panelHeight);
-
-  textSize(bodySize);
-  fill(bodyColor);
-  var dpath = calcDistancePath(path);
-  if (remainVertices == null){
-    var percentOptimal = 100 * (recordDistance / dpath);
-    text('Độ dài: ' + nf(dpath, 0, 2) + ' px; ' + nf(percentOptimal, 0, 2) + '% tối ưu', 0, -2*bodySize);
-  }
-  var percentGR = 100 * (countGR / totalCountGR)
-  text(nf(percentGR, 0, 2) + '% hoàn thành / ' + nf(totalCountGR, 0, 0) + ' phép tính', 0, -bodySize);
-  //console.log(countGR);
 
   // Genetic //
 
@@ -263,11 +106,9 @@ function draw() {
       generation --;
     }
   }
-  //console.log(bestEverGA);
-  //console.log(currentBestGA);
 
   // Result panel
-  translate(panelWidth, - panelHeight);
+  translate(padding, padding);
   
   textSize(titleSize);
   fill(titleColor);
@@ -286,7 +127,17 @@ function draw() {
   endShape();
 
   // Process pane;
-  translate(0, panelHeight);
+  translate(panelWidth, 0);
+
+  stroke("#aaaaaa");
+  strokeWeight(pathWeightResult);
+  noFill();
+  beginShape();
+  for (var i = 0; i < bestEverGA.length; i++) {
+    var n = bestEverGA[i];
+    vertex(vertices[n].x, vertices[n].y);
+  }
+  endShape();
 
   if (generation >= 0){
     if (generation == 0 && indexPopulation == popSize){generation --;}
@@ -328,9 +179,7 @@ function draw() {
 
   textSize(bodySize);
   fill(bodyColor);
-  var percentOptimalGA = 100 * (recordDistance / recordDistanceGA);
   var percentGA = 100 * (countGA / totalCountGA);
-  text('Độ dài: ' + nf(recordDistanceGA, 0, 2) + ' px; ' + nf(percentOptimalGA, 0, 2) + '% tối ưu', 0, -2*bodySize);
   text(nf(percentGA, 0, 2) + '% hoàn thành / ' + nf(totalCountGA) + ' phép tính', 0, -bodySize);
 }
 
@@ -344,15 +193,6 @@ function drawVertices(fillColorStart, fillColor, radius){
 }
 
 // Helper functions //
-/*
-function factorial(n) {
-  if (n == 1) {
-    return 1;
-  } else {
-    return n * factorial(n - 1);
-  }
-}
-*/
 
 function swap(a, i, j) {
   var temp = a[i];
@@ -364,8 +204,6 @@ function customShuffle(array, first) {
   const updatedArray = shuffle(array).filter(item => item !== first);
   return [first, ...updatedArray];
 }
-
-// Bruce force //
 
 // Order distance
 function calcDistance(points, order) {
@@ -379,73 +217,6 @@ function calcDistance(points, order) {
     sum += d;
   }
   return sum;
-}
-
-// Lexical order
-function nextOrder() {
-  // STEP 1 of the algorithm
-  var largestI = -1;
-  for (var i = 1; i < order.length - 1; i++) {
-    if (order[i] < order[i + 1]) {
-      largestI = i;
-    }
-  }
-  if (largestI == -1) {
-    order = order;
-    //console.log('finished');
-  }
-  else{
-    count++;
-
-    // STEP 2
-    var largestJ = -1;
-    for (var j = 1; j < order.length; j++) {
-      if (order[largestI] < order[j]) {
-        largestJ = j;
-      }
-    }
-
-    // STEP 3
-    swap(order, largestI, largestJ);
-
-    // STEP 4: reverse from largestI + 1 to the end
-    var endArray = order.splice(largestI + 1);
-    endArray.reverse();
-    order = order.concat(endArray);
-  }
-}
-
-// Greedy //
-
-// Path distance
-function calcDistancePath(path) {
-  var sum = 0;
-  for (var i = 0; i < path.length - 1; i++) {
-    var d = dist(path[i].x, path[i].y, path[i+1].x, path[i+1].y);
-    sum += d;
-  }
-  return sum;
-}
-
-// Nearest neighbor
-function nearestNeighbor(){
-  if (remainVertices != null){
-      console.log(remainVertices.length);
-      var bestNeighbor = 0;
-      var bestDistance = dist(currentVertex.x, currentVertex.y, remainVertices[0].x, remainVertices[0].y);
-      countGR ++;
-
-      var d;
-      for (var i = 1; i < remainVertices.length; i++){
-        countGR ++;
-        d = dist(currentVertex.x, currentVertex.y, remainVertices[i].x, remainVertices[i].y);
-        if (d < bestDistance){
-          bestDistance = d;
-          bestNeighbor = i;
-        }
-      }
-      swap(remainVertices, 0, bestNeighbor);
-  }
 }
 
 // Genetic //
