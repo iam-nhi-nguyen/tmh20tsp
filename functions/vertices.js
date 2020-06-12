@@ -10,7 +10,6 @@ function findVertices(){
     }
     else{
         fixedVertices();
-        //randomDistances();
         if(document.getElementById('distMat').value == ""){
             distances = distancesSample;
         }
