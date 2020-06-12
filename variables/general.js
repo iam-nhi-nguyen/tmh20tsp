@@ -8,7 +8,7 @@ var framerate;
 var vertices;
 var totalVertices;
 
-var verticesSample = [[3,0],[1,4],[5,1],[0,2],[4,5],[4,0],[6,5],[1,0]];
+var verticesSample = [[3,0],[1,4],[5,1],[0,2],[4,5],[4,0],[6,5],[2,0]];
 var distancesSample = [[0,15,40,25],[15,0,30,35],[40,30,0,50],[25,35,50,0]];
 
 var distances;
