@@ -19,12 +19,14 @@ function setupGreedy(){
 }
 
 // Draw functions
-function drawGreedy(vertical){
+function drawGreedy(vertical, numbered){
 	drawTitle("Tham lam");
 
 	drawRoute(pathColorResult, pathWeightResult, path);
 
-	drawVertices(startColorResult, verticesColorResult, radiusResult);
+    drawVertices(startColorResult, verticesColorResult, radiusResult, numbered);
+
+    console.log(numbered);
 
 	if(remainVertices != null){
 		nearestNeighbor();
@@ -61,7 +63,7 @@ function drawGreedy(vertical){
         translate(panelWidth, 0);
     }
 
-    var dpath = calcDistancePath(path);
+    var dpath = calcDistance(path);
     var percentGR = 100 * (countGR / totalCountGR)
 
 	textSize(bodySize);
@@ -70,10 +72,10 @@ function drawGreedy(vertical){
 	if (remainVertices == null){
         if(mod == "all"){
             var percentOptimal = 100 * (recordDistance / dpath);
-            text('Độ dài: ' + nf(dpath, 0, 2) + ' px; ' + nf(percentOptimal, 0, 2) + '% tối ưu', 0, -2*bodySize);
+            text('Độ dài: ' + nf(dpath, 0, 2) + ' đơn vị; ' + nf(percentOptimal, 0, 2) + '% tối ưu', 0, -2*bodySize);
         }
         else{
-            text('Độ dài: ' + nf(dpath, 0, 2) + ' px', 0, -2*bodySize);
+            text('Độ dài: ' + nf(dpath, 0, 2) + ' đơn vị', 0, -2*bodySize);
         }
     }
 
@@ -89,21 +91,21 @@ function drawGreedy(vertical){
 function nearestNeighbor(){
     if (remainVertices != null){
         var bestNeighbor = 0;
-        var c = currentVertex;
+        var distance = distances[currentVertex];
         var n = remainVertices[0];
-        var bestDistance = dist(vertices[c].x, vertices[c].y, vertices[n].x, vertices[n].y);
+        var bestDistance = distance[n];
         countGR ++;
   
         var d;
         for (var i = 1; i < remainVertices.length; i++){
             countGR ++;
             n = remainVertices[i];
-            var d = dist(vertices[c].x, vertices[c].y, vertices[n].x, vertices[n].y);
-            if (d < bestDistance){
+            if (distance[n] < bestDistance){
                 bestNeighbor = i;
-                bestDistance = d;
+                bestDistance = distance[n];
             }
         }
+
         swap(remainVertices, 0, bestNeighbor);
     }
 }
