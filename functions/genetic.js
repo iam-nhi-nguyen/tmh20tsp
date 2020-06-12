@@ -30,7 +30,7 @@ function setupGenetic(){
 }
 
 // Draw functions
-function drawGenetic(vertical){   
+function drawGenetic(vertical, numbered){   
 	if (generation > 0){
 		if (indexPopulation == 0){
 		calculateFitness();
@@ -44,7 +44,7 @@ function drawGenetic(vertical){
 
 	drawRoute(pathColorResult, pathWeightResult, bestEverGA);
 
-    drawVertices(startColorResult, verticesColorResult, radiusResult);
+    drawVertices(startColorResult, verticesColorResult, radiusResult, numbered);
     
     if(vertical){
         translate(0, panelHeight);
@@ -81,10 +81,10 @@ function drawGenetic(vertical){
 	textSize(bodySize);
     fill(bodyColor);
     if(mod == "all"){
-        text('Độ dài: ' + nf(recordDistanceGA, 0, 2) + ' px; ' + nf(percentOptimalGA, 0, 2) + '% tối ưu', 0, -2*bodySize);
+        text('Độ dài: ' + nf(recordDistanceGA, 0, 2) + ' đơn vị; ' + nf(percentOptimalGA, 0, 2) + '% tối ưu', 0, -2*bodySize);
     }
     else{
-        text('Độ dài: ' + nf(recordDistanceGA, 0, 2) + ' px', 0, -2*bodySize);
+        text('Độ dài: ' + nf(recordDistanceGA, 0, 2) + ' đơn vị', 0, -2*bodySize);
     }
     text(nf(percentGA, 0, 2) + '% hoàn thành / ' + nf(totalCountGA) + ' phép tính', 0, -bodySize);
     
@@ -100,7 +100,7 @@ function drawGenetic(vertical){
 function calculateFitness(){
     //var currentRecord = Infinity;
     for (var i = 0; i < population.length; i++){
-        var d = calcDistance(vertices, population[i]);
+        var d = calcDistance(population[i]);
         if (d < recordDistanceGA){
             recordDistanceGA = d;
             bestEverGA = population[i];
