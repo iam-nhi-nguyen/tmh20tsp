@@ -46,9 +46,17 @@ function randomDistances(){
 function fixedVertices(){
     vertices = [];
 
-    for (var i = 0; i < totalVertices; i++) {
-        var v = createVector(verticesSample[i][0]*35, verticesSample[i][1]*35);
-        vertices[i] = v;
+    if(mod == "all"){
+        for (var i = 0; i < totalVertices; i++) {
+            var v = createVector(verticesSample[i][0]*35, verticesSample[i][1]*35);
+            vertices[i] = v;
+        }
+    }
+    else{
+        for (var i = 0; i < totalVertices; i++) {
+            var v = createVector(verticesSample[i][0]*60, verticesSample[i][1]*35);
+            vertices[i] = v;
+        }
     }
 }
 
