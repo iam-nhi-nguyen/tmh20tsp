@@ -2,13 +2,14 @@
 // Traveling Salesman Problem
 
 // Draw functions
+
 function drawTitle(title){
     textSize(titleSize);
 	fill(titleColor);
 	text(title, - titleSize, - titleSize);
 }
 
-function drawVertices(fillColorStart, fillColor, radius){
+function drawVertices(fillColorStart, fillColor, radius, numbered = false){
     stroke(backgroundColor);
     strokeWeight(1);
 
@@ -21,6 +22,10 @@ function drawVertices(fillColorStart, fillColor, radius){
     }
 
     strokeWeight(0);
+
+    if(numbered){
+        numberVertices();
+    }
 }
 
 function drawRoute(color, weight, route){
@@ -36,6 +41,66 @@ function drawRoute(color, weight, route){
     endShape();
 
     strokeWeight(0);
+}
+
+function numberVertices(){
+    for(var i = 0; i < totalVertices; i++){
+        textSize(bodySize);
+	    fill(bodyColor);
+        text(nf(i + 1), vertices[i].x - 5, vertices[i].y - 10);
+    }
+}
+
+function drawMap(){
+    for(var i = 0; i < totalVertices; i++){
+        for(var j = i+1; j < totalVertices; j++){
+            var verticeA = vertices[i];
+            var verticeB = vertices[j];
+           
+            stroke(pathColorResult);
+            strokeWeight(pathWeightResult);
+            noFill();
+
+            beginShape();
+            vertex(verticeA.x, verticeA.y);
+            vertex(verticeB.x, verticeB.y);
+            endShape();
+
+            strokeWeight(0);
+        }
+    }
+
+    drawVertices(startColorResult, verticesColorResult, radiusResult, true);
+
+    for(var i = 0; i < totalVertices; i++){
+        for(var j = i+1; j < totalVertices; j++){
+            var verticeA = vertices[i];
+            var verticeB = vertices[j];
+            
+            
+            var textX = (verticeA.x + verticeB.x)/2;
+            var textY = (verticeA.y + verticeB.y)/2;
+            var slope = (verticeA.y - verticeB.y)/(verticeA.x - verticeB.x);
+            if(slope < 0){
+                var degree = atan(-slope);
+            }
+            else{
+                var degree = -atan(slope);
+            }
+
+            translate(textX, textY);
+            rotate(-degree);
+            
+            textSize(bodySize);
+	        fill(bodyColor);
+            text(nf(distances[i][j], 0, 0), -5, 0);
+
+            rotate(degree);
+            translate(-textX, -textY);
+        }
+    }
+
+    numberVertices();
 }
 
 // Helpers
@@ -56,25 +121,12 @@ function customShuffle(array, first){
 // Distance
 
 // Order distance
-function calcDistance(points, order){
+function calcDistance(order){
     var sum = 0;
     for (var i = 0; i < order.length - 1; i++){
         var verticeAIndex = order[i];
-        var verticeA = points[verticeAIndex];
         var verticeBIndex = order[i + 1];
-        var verticeB = points[verticeBIndex];
-        var d = dist(verticeA.x, verticeA.y, verticeB.x, verticeB.y);
-        sum += d;
-    }
-    return sum;
-}
-
-// Path distance
-function calcDistancePath(path){
-    var sum = 0;
-    for (var i = 0; i < path.length - 1; i++){
-        var d = dist(vertices[path[i]].x, vertices[path[i]].y, vertices[path[i+1]].x, vertices[path[i+1]].y);
-        sum += d;
+        sum += distances[verticeAIndex][verticeBIndex];
     }
     return sum;
 }
