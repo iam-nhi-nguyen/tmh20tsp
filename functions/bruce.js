@@ -13,7 +13,7 @@ function setupBruce(){
 
     count = 0;
 
-    var d = calcDistance(vertices, order);
+    var d = calcDistance(order);
     recordDistance = d;
     bestEver = order.slice();
   
@@ -21,12 +21,13 @@ function setupBruce(){
 }
 
 // Draw functions
-function drawBruce(vertical){
+function drawBruce(vertical, numbered){
     drawTitle("Vét cạn");
 
-	drawRoute(pathColorResult, pathWeightResult, bestEver)
+    drawRoute(pathColorResult, pathWeightResult, bestEver);
+    
+    drawVertices(startColorResult, verticesColorResult, radiusResult, numbered);
 
-    drawVertices(startColorResult, verticesColorResult, radiusResult);
     
     if(vertical){
         translate(0, panelHeight);
@@ -34,7 +35,7 @@ function drawBruce(vertical){
     else{
         translate(panelWidth, 0);
     }
-
+    
     drawRoute(processColor, pathWeightProcess, order)
 
     drawVertices(processColor, processColor, radiusProcess);
@@ -46,10 +47,10 @@ function drawBruce(vertical){
 	}
 	textSize(bodySize);
 	fill(bodyColor);
-	text('Độ dài: ' + nf(recordDistance, 0, 2) + ' px', 0, -2*bodySize);
+	text('Độ dài: ' + nf(recordDistance, 0, 2) + ' đơn vị', 0, -2*bodySize);
     text(nf(percent, 0, 2) + '% hoàn thành / ' + nf(totalPermutations*(totalVertices - 1)) + ' phép tính', 0, -bodySize);
     
-    var d = calcDistance(vertices, order);
+    var d = calcDistance(order);
 	if (d < recordDistance) {
 		recordDistance = d;
 		bestEver = order.slice();
